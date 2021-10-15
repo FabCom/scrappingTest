@@ -3,11 +3,13 @@
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
-@site_origin = 'https://annuaire-des-mairies.com/'
+
+# @site_origin = 'https://annuaire-des-mairies.com/'
 
 def create_departements_array
+  site_origin = 'https://annuaire-des-mairies.com/'
   departements_array = []
-  page = Nokogiri::HTML(URI.open(@site_origin.to_s))
+  page = Nokogiri::HTML(URI.open(site_origin))
   search_departements_array = page.xpath('//tbody//a')
   search_departements_array.each do |node|
     departement_hash = {}
@@ -24,20 +26,22 @@ def get_departement(departement_id)
 end
 
 def get_town_info(town_hash)
+  site_origin = 'https://annuaire-des-mairies.com/'
   if town_hash['link_relative'][0] == "./"
     link = town_hash['link_relative'][2, town_hash['link_relative'].length]
   else
     link = town_hash['link_relative']
   end
-  town_link = @site_origin + link
+  town_link = site_origin + link
   page_town = Nokogiri::HTML(URI.open(town_link))
   search_town_info_nodes = page_town.xpath("//tbody//td[contains(text(),'@')]")
   search_town_info_nodes.text
 end
 
 def create_towns_array(departement_hash)
+  site_origin = 'https://annuaire-des-mairies.com/'
   towns_array = []
-  departement_link = @site_origin + departement_hash['link_relative']
+  departement_link = site_origin + departement_hash['link_relative']
   departement_name = departement_hash['name']
   page_departement = Nokogiri::HTML(URI.open(departement_link.to_s))
   departement_links = []
@@ -45,7 +49,7 @@ def create_towns_array(departement_hash)
   all_pages_for_departement = page_departement.xpath("//table//a[not(@class='lientxt')]")
   all_pages_for_departement.each do |node|
     if node.xpath('@href').to_s.include? "#{departement_name.downcase}-"
-      departement_links.push(@site_origin + node.xpath('@href').to_s)
+      departement_links.push(site_origin + node.xpath('@href').to_s)
     end
   end
   # puts departement_links
@@ -82,17 +86,21 @@ def process
     puts "                ####    #{departement_hash['name'].upcase}    ####"
     print "\n" * 2
     puts "Patiente un peu le temps que j'aille siphoner tout cela..."
+    print "\n" * 2
     towns_array = create_towns_array(departement_hash)
     towns_array.each do |current|
-      puts "#{current['name']} : #{get_town_info(current)}"
-      # puts current
+      current['email'] = get_town_info(current)
+      puts "#{current['name']} : #{current['email']}"
+      current.delete('link_relative')
     end
+  print "\n" * 2
+  puts towns_array
   end
 end
-process()
+# process()
 
 
-# town_hash['email'] = get_town_info(town_hash)
+
 # puts create_departements_array
 # create_towns_array({ 'id' => '24 ', 'name' => 'Dordogne', 'link_relative' => 'dordogne.html' })
  # puts get_town_info({"name"=>"VILLETTE-SUR-AIN", "link_relative"=>"01/villette-sur-ain.html"})
