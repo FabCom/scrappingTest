@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require 'rubygems'
 require 'nokogiri'
 require 'open-uri'
 
-page = Nokogiri::HTML(URI.open("lib/index.html"))
+page = Nokogiri::HTML(URI.open('lib/index.html'))
 puts page.css('//div/*').text
-
 
 #     Si tu veux récupérer tous les liens d'une page, tape page.xpath('//a'). Pour tous les titres h1, utilise page.xpath('//h1')
 #     Si tu veux récupérer les liens situés sous un titre h1 (même s'ils sont inclus dans un paragraphe, lui-même imbriqué dans une div), tape page.xpath('//h1//a').

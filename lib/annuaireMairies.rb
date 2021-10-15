@@ -27,11 +27,11 @@ end
 
 def get_town_info(town_hash)
   site_origin = 'https://annuaire-des-mairies.com/'
-  if town_hash['link_relative'][0] == "./"
-    link = town_hash['link_relative'][2, town_hash['link_relative'].length]
-  else
-    link = town_hash['link_relative']
-  end
+  link = if town_hash['link_relative'][0] == './'
+           town_hash['link_relative'][2, town_hash['link_relative'].length]
+         else
+           town_hash['link_relative']
+         end
   town_link = site_origin + link
   page_town = Nokogiri::HTML(URI.open(town_link))
   search_town_info_nodes = page_town.xpath("//tbody//td[contains(text(),'@')]")
@@ -93,14 +93,12 @@ def process
       puts "#{current['name']} : #{current['email']}"
       current.delete('link_relative')
     end
-  print "\n" * 2
-  puts towns_array
+    print "\n" * 2
+    puts towns_array
   end
 end
 # process()
 
-
-
 # puts create_departements_array
 # create_towns_array({ 'id' => '24 ', 'name' => 'Dordogne', 'link_relative' => 'dordogne.html' })
- # puts get_town_info({"name"=>"VILLETTE-SUR-AIN", "link_relative"=>"01/villette-sur-ain.html"})
+# puts get_town_info({"name"=>"VILLETTE-SUR-AIN", "link_relative"=>"01/villette-sur-ain.html"})
