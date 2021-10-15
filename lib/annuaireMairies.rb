@@ -32,10 +32,13 @@ def get_town_info(town_hash)
          else
            town_hash['link_relative']
          end
+  begin
   town_link = site_origin + link
   page_town = Nokogiri::HTML(URI.open(town_link))
   search_town_info_nodes = page_town.xpath("//tbody//td[contains(text(),'@')]")
   search_town_info_nodes.text
+  rescue
+  end
 end
 
 def create_towns_array(departement_hash)
@@ -97,7 +100,7 @@ def process
     puts towns_array
   end
 end
-# process()
+process()
 
 # puts create_departements_array
 # create_towns_array({ 'id' => '24 ', 'name' => 'Dordogne', 'link_relative' => 'dordogne.html' })
