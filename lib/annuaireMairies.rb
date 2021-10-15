@@ -33,11 +33,12 @@ def get_town_info(town_hash)
            town_hash['link_relative']
          end
   begin
-  town_link = site_origin + link
-  page_town = Nokogiri::HTML(URI.open(town_link))
-  search_town_info_nodes = page_town.xpath("//tbody//td[contains(text(),'@')]")
-  search_town_info_nodes.text
-  rescue
+    town_link = site_origin + link
+    page_town = Nokogiri::HTML(URI.open(town_link))
+    search_town_info_nodes = page_town.xpath("//tbody//td[contains(text(),'@')]")
+    search_town_info_nodes.text
+  rescue StandardError
+    #if page doesn't exist
   end
 end
 
@@ -97,10 +98,15 @@ def process
       current.delete('link_relative')
     end
     print "\n" * 2
+    sleep 1.5
+    system('clear')
+    puts "Voilà maintenant un beau tableau avec ces emails..."
+    sleep 1.5
+    print "\n" * 2
     puts towns_array
   end
 end
-process()
+process
 
 # puts create_departements_array
 # create_towns_array({ 'id' => '24 ', 'name' => 'Dordogne', 'link_relative' => 'dordogne.html' })
